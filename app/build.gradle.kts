@@ -76,7 +76,6 @@ dependencies {
     implementation("io.github.ParkSangGwon:tedpermission-normal:3.3.0")
 
     //map 관련
-    //implementation("io.github.fornewid:naver-map-compose:1.3.2")
     implementation("com.naver.maps:map-sdk:3.16.2")
     implementation("com.google.android.gms:play-services-location:20.0.0")
     implementation("com.google.accompanist:accompanist-permissions:0.29.1-alpha")

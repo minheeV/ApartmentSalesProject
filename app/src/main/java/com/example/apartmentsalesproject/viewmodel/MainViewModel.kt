@@ -14,6 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 
 class MainViewModel : ViewModel() {
     private val TAG = MainViewModel::class.java.simpleName
@@ -21,10 +26,15 @@ class MainViewModel : ViewModel() {
     private var retrofitInstance: ApartmentSalesService =
         RetrofitInstance.getInstance().create(ApartmentSalesService::class.java)
     private var job: Job? = null
+    private var job1: Job? = null
 
     private val _apartmentSalesData = MutableLiveData<ApartSales?>()
     val apartmentSalesData: LiveData<ApartSales?>
         get() = _apartmentSalesData
+
+    private val _codeIdLiveData = MutableLiveData<String?>()
+    val codeIdLiveData: LiveData<String?>
+        get() = _codeIdLiveData
 
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         onError("Exception: ${throwable.localizedMessage}")
@@ -35,12 +45,12 @@ class MainViewModel : ViewModel() {
     }
 
 
-    fun getApartSales() {
+    fun getApartSales(codeId: String?) {
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
             try {
                 val response = retrofitInstance.getApartmentSales(
                     BuildConfig.api_key,
-                    "11110",
+                    codeId.toString(),
                     "202311",
                 )
                 withContext(Dispatchers.Main) {
@@ -52,5 +62,52 @@ class MainViewModel : ViewModel() {
             }
 
         }
+    }
+
+    fun requestReverseGeocoding(coord: String) {
+        job1 = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            try {
+                var query = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?\n" +
+                        "request=coordsToaddr&coords=" + coord + "&sourcecrs=epsg:4326&output=json&orders=legalcode"
+
+                val url = URL(query)
+                val conn = url.openConnection() as HttpURLConnection
+                conn.apply {
+                    connectTimeout = 5000
+                    readTimeout = 5000
+                    requestMethod = "GET"
+                    setRequestProperty(
+                        "X-NCP-APIGW-API-KEY-ID",
+                        BuildConfig.naver_client_id
+                    )
+                    setRequestProperty(
+                        "X-NCP-APIGW-API-KEY",
+                        BuildConfig.naver_client_secret
+                    )
+                    doInput = true
+                }
+
+                val responseCode = conn.responseCode
+
+                val bufferedReader: BufferedReader =
+                    if (responseCode == 200) BufferedReader(InputStreamReader(conn.inputStream))
+                    else BufferedReader(InputStreamReader(conn.errorStream))
+
+                val line = bufferedReader.readLine()
+                val jsonInfo = JSONObject(line)
+                val result = jsonInfo.getJSONArray("results").getJSONObject(0).getJSONObject("code")
+                val codeId = result.getString("id").substring(0 until 5)
+                Log.d(TAG, "확인 : $codeId")
+//                withContext(Dispatchers.Main) {
+//                    _codeIdLiveData.value = codeId
+//                }
+                _codeIdLiveData.postValue(codeId)
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
     }
 }

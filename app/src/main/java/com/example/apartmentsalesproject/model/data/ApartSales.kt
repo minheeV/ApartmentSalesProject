@@ -7,40 +7,40 @@ import com.tickaroo.tikxml.annotation.Xml
 @Xml(name = "response")
 data class ApartSales(
     @Element(name = "body")
-    val body: Body,
+    val body: Body?,
     @Element(name = "header")
-    val header: Header
+    val header: Header?
 )
 
 @Xml(name = "header")
 data class Header(
     @PropertyElement(name = "resultCode")
-    val resultCode: Int,
+    val resultCode: Int?,
     @PropertyElement(name = "resultMsg")
-    val resultMsg: String
+    val resultMsg: String?
 )
 
 @Xml(name = "body")
 data class Body(
     @Element(name = "items")
-    val items: Items,
+    val items: Items?,
     @PropertyElement(name = "numOfRows")
-    val numOfRows: Int,
+    val numOfRows: Int?,
     @PropertyElement(name = "pageNo")
-    val pageNo: Int,
+    val pageNo: Int?,
     @PropertyElement(name = "totalCount")
-    val totalCount: Int
+    val totalCount: Int?
 )
 
 @Xml(name = "items")
 data class Items(
     @Element(name = "item")
-    val item: List<Item>
+    val item: List<SaleItem>?
 )
 
 
-@Xml
-data class Item(
+@Xml(name = "Item")
+data class SaleItem(
     @PropertyElement(name = "거래금액")
     var dealAmount: String?,
     @PropertyElement(name = "거래유형")

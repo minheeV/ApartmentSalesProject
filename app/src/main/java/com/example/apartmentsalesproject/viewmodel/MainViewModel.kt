@@ -25,6 +25,7 @@ class MainViewModel : ViewModel() {
 
     private var retrofitInstance: ApartmentSalesService =
         RetrofitInstance.getInstance().create(ApartmentSalesService::class.java)
+
     private var job: Job? = null
     private var job1: Job? = null
 
@@ -54,8 +55,10 @@ class MainViewModel : ViewModel() {
                     "202311",
                 )
                 withContext(Dispatchers.Main) {
-                    if (response.isSuccessful)
+                    if (response.isSuccessful){
+                        Log.d(TAG, "getApartSales : ${response.body()}")
                         _apartmentSalesData.value = response.body()
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -1,9 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.ApartmentSalesProject" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <style name="Theme.ApartmentSalesProject" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="Theme.ApartmentSalesProject" parent="Base.Theme.ApartmentSalesProject" />
+    <style name="AppTheme.NumberPicker" parent="Theme.ApartmentSalesProject">
+        <item name="colorControlNormal">@color/theme_color</item>
+    </style>
+
+
+    <!--    <style name="Theme.App.ApartmentSalesStarting" parent="Base.Theme.ApartmentSalesProject">
+            <item name="windowSplashScreenBackground">@color/theme_color</item>
+            <item name="windowSplashScreenAnimatedIcon">@drawable/baseline_apartment_24</item>
+            <item name="postSplashScreenTheme">@style/Theme.ApartmentSalesProject</item>
+        </style>-->
 </resources>

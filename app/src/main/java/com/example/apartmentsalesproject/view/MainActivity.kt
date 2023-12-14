@@ -1,25 +1,27 @@
 package com.example.apartmentsalesproject.view
 
 import android.Manifest
+import android.app.DatePickerDialog.OnDateSetListener
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.apartmentsalesproject.viewmodel.MainViewModel
 import com.example.apartmentsalesproject.R
 import com.example.apartmentsalesproject.databinding.ActivityMainBinding
 import com.example.apartmentsalesproject.model.data.SaleItem
+import com.example.apartmentsalesproject.viewmodel.MainViewModel
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.util.FusedLocationSource
+
 
 //TODO 전체적인 코드 정리 필요
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -40,11 +42,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationSource: FusedLocationSource
 
     private var legalCode = 0
+    private var yearMonth = ""
+
+    var d =
+        OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+
+            yearMonth = "$year" + "$monthOfYear"
+            //월 2자리로
+            Log.d(TAG, "년월 = $yearMonth")
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
+        binding.btnDatePicker.setOnClickListener {
+            val pd = MyDatePickerDialog()
+            pd.setListener(d)
+            pd.show(supportFragmentManager, "MyPicker")
+
+        }
         if (!hasPermission()) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE)
         } else {
@@ -63,7 +80,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.d(TAG, "ReverseGeocoding =  $it, legalCode = $legalCode")
             if (legalCode != it?.toInt()) {
                 legalCode = it?.toInt()!!
-                viewModel.getApartSales(it)
+                //viewModel.getApartSales(it)
             }
         }
 

@@ -13,16 +13,16 @@ import java.util.Calendar
 
 class MyDatePickerDialog() : DialogFragment() {
     private var listener: DatePickerDialog.OnDateSetListener? = null
-    private final val MAX_YEAR = 2099
-    private final val MIN_YEAR = 1980
+    private val MAX_YEAR = 2099
+    private val MIN_YEAR = 1980
 
-    var cal = Calendar.getInstance()
+    private var cal = Calendar.getInstance()
     fun setListener(listener: DatePickerDialog.OnDateSetListener?) {
         this.listener = listener
     }
 
-    var btnConfirm: Button? = null
-    var btnCancel: Button? = null
+    private var btnConfirm: Button? = null
+    private var btnCancel: Button? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity)
@@ -40,9 +40,9 @@ class MyDatePickerDialog() : DialogFragment() {
             listener?.onDateSet(null, yearPicker.value, monthPicker.value, 0)
             dismiss()
         }
-        btnCancel?.setOnClickListener(View.OnClickListener {
+        btnCancel?.setOnClickListener {
             dismiss()
-        })
+        }
 
         monthPicker.minValue = 1
         monthPicker.maxValue = 12
@@ -51,6 +51,7 @@ class MyDatePickerDialog() : DialogFragment() {
         yearPicker.minValue = MIN_YEAR
         yearPicker.maxValue = MAX_YEAR
         yearPicker.value = year
+
         builder.setView(dialog)
 
         return builder.create()

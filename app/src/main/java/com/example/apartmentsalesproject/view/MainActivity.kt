@@ -46,11 +46,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var d =
         OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-
-            yearMonth = "$year" + "$monthOfYear"
+            yearMonth = "$year" + "${getMonth(monthOfYear)}"
             //월 2자리로
             Log.d(TAG, "년월 = $yearMonth")
         }
+
+    private fun getMonth(month: Int): String {
+        return if (month in 1..9)
+            "0$month"
+        else
+            "$month"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +86,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.d(TAG, "ReverseGeocoding =  $it, legalCode = $legalCode")
             if (legalCode != it?.toInt()) {
                 legalCode = it?.toInt()!!
-                //viewModel.getApartSales(it)
+                viewModel.getApartSales(it, yearMonth)
             }
         }
 

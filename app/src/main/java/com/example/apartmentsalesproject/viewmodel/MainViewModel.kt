@@ -46,13 +46,13 @@ class MainViewModel : ViewModel() {
     }
 
 
-    fun getApartSales(codeId: String?) {
+    fun getApartSales(codeId: String?, yearMonth: String?) {
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
             try {
                 val response = retrofitInstance.getApartmentSales(
                     BuildConfig.api_key,
                     codeId.toString(),
-                    "202311",
+                    yearMonth.toString(),
                 )
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful){

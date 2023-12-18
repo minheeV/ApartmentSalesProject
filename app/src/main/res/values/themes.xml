@@ -10,9 +10,9 @@
     </style>
 
 
-    <!--    <style name="Theme.App.ApartmentSalesStarting" parent="Base.Theme.ApartmentSalesProject">
-            <item name="windowSplashScreenBackground">@color/theme_color</item>
-            <item name="windowSplashScreenAnimatedIcon">@drawable/baseline_apartment_24</item>
-            <item name="postSplashScreenTheme">@style/Theme.ApartmentSalesProject</item>
-        </style>-->
+    <style name="Theme.App.ApartmentSalesStarting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/theme_color</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/baseline_apartment_24</item>
+        <item name="postSplashScreenTheme">@style/Theme.ApartmentSalesProject</item>
+    </style>
 </resources>

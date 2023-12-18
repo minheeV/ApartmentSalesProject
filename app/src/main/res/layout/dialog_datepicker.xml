@@ -13,16 +13,17 @@
         android:layout_width="63dp"
         android:layout_height="124dp"
         android:theme="@style/AppTheme.NumberPicker"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/btn_cancel"
+        app:layout_constraintEnd_toEndOf="@id/btn_cancel"
         app:layout_constraintTop_toTopOf="parent" />
 
     <NumberPicker
         android:id="@+id/monthpicker_datepicker"
         android:layout_width="63dp"
         android:layout_height="124dp"
-        android:layout_marginStart="50dp"
         android:theme="@style/AppTheme.NumberPicker"
-        app:layout_constraintStart_toEndOf="@+id/yearpicker_datepicker"
+        app:layout_constraintStart_toStartOf="@id/btn_confirm"
+        app:layout_constraintEnd_toEndOf="@id/btn_confirm"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ApartmentSalesProject</string>
+    <string name="btn_confirm">확인</string>
+    <string name="btn_cancel">취소</string>
 </resources>

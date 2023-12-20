@@ -24,7 +24,6 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.util.FusedLocationSource
 
 
-//TODO 전체적인 코드 정리 필요
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val TAG = MainActivity::class.java.simpleName
 
@@ -42,57 +41,31 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var naverMap: NaverMap
     private lateinit var fusedLocationSource: FusedLocationSource
 
-    private var legalCode = 0
-    private var yearMonth = ""
+    private var legalCode = 0 // 법정동코드
+    private var yearMonth = "202312" // 년월
 
-    var d =
-        OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            yearMonth = "$year" + "${getMonth(monthOfYear)}"
-            //월 2자리로
-            Log.d(TAG, "년월 = $yearMonth")
-        }
-
-    private fun getMonth(month: Int): String {
-        return if (month in 1..9)
-            "0$month"
-        else
-            "$month"
+    private var dateSetListener = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+        yearMonth = "$year" + getMonth(monthOfYear)
+        Log.d(TAG, "년월 = $yearMonth")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         binding.btnDatePicker.setOnClickListener {
             val pd = MyDatePickerDialog()
-            pd.setListener(d)
+            pd.setListener(dateSetListener)
             pd.show(supportFragmentManager, "MyPicker")
-
         }
-        if (!hasPermission()) {
+
+        if (!hasPermission())
             ActivityCompat.requestPermissions(this, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE)
-        } else {
+        else
             initMapView()
-        }
 
-        viewModel.apartmentSalesData.observe(this) {
-            Log.d(
-                TAG,
-                "size = ${it?.body?.items?.item?.size} and ====== ${it?.body?.items?.item.toString()}"
-            )
-            initSalesRecyclerView(it?.body?.items?.item!!)
-        }
-
-        viewModel.codeIdLiveData.observe(this) {
-            Log.d(TAG, "ReverseGeocoding =  $it, legalCode = $legalCode")
-            if (legalCode != it?.toInt()) {
-                legalCode = it?.toInt()!!
-                viewModel.getApartSales(it, yearMonth)
-            }
-        }
-
+        setLiveDataObserve()
     }
 
     // hasPermission()에서는 위치 권한이 있을 경우 true를, 없을 경우 false를 반환한다.
@@ -119,11 +92,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun initSalesRecyclerView(items: List<SaleItem>) {
-        val adapter = SalesRecyclerAdapter(items)
+        Log.d(TAG, "init recyclerview")
+        val recyclerAdapter = SalesRecyclerAdapter(items)
         binding.recyclerSales.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            this.adapter = adapter
-            adapter.notifyDataSetChanged()
+            adapter = recyclerAdapter
+        }
+    }
+
+    private fun setLiveDataObserve() {
+        viewModel.apartmentSalesData.observe(this) {
+            Log.d(
+                TAG,
+                "size = ${it?.body?.items?.item?.size} and ====== ${it?.body?.items?.item.toString()}"
+            )
+            initSalesRecyclerView(it?.body?.items?.item!!)
+        }
+
+        //TODO 년월 바꿨을 때 법정동 같을 때 처리
+        viewModel.codeIdLiveData.observe(this) {
+            Log.d(TAG, "ReverseGeocoding =  $it, legalCode = $legalCode")
+            if (legalCode != it?.toInt()) {
+                legalCode = it?.toInt()!!
+                viewModel.getApartSales(it, yearMonth)
+            }
         }
     }
 
@@ -141,11 +133,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //지도 카메라가 변경 되고 있을 때
         naverMap.addOnCameraChangeListener { reason, animated ->
-            Log.d(TAG, "카메라 변경 - reason: $reason, animated: $animated")
+            Log.d(TAG, " 지도 카메라가 변경 되고 있을 때 카메라 변경 - reason: $reason, animated: $animated")
         }
 
         //지도 카메라 변경이 끝났을 때
         naverMap.addOnCameraIdleListener {
+            Log.d(TAG, "지도 카메라 변경이 끝났을 때")
             val coord =
                 naverMap.cameraPosition.target.longitude.toString() + ", " + naverMap.cameraPosition.target.latitude
             viewModel.requestReverseGeocoding(coord)
@@ -153,9 +146,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //사용자의 위치가 변경될 때
         naverMap.addOnLocationChangeListener {
-            Log.d(TAG, "현재 위치 변경")
+            Log.d(TAG, "사용자의 위치가 변경될 때")
         }
+    }
 
+
+    //1~9월 : 01~09월 변환
+    private fun getMonth(month: Int): String {
+        return if (month in 1..9)
+            "0$month"
+        else
+            "$month"
     }
 
 

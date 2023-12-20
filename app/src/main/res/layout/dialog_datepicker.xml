@@ -13,8 +13,8 @@
         android:layout_width="63dp"
         android:layout_height="124dp"
         android:theme="@style/AppTheme.NumberPicker"
-        app:layout_constraintStart_toStartOf="@id/btn_cancel"
         app:layout_constraintEnd_toEndOf="@id/btn_cancel"
+        app:layout_constraintStart_toStartOf="@id/btn_cancel"
         app:layout_constraintTop_toTopOf="parent" />
 
     <NumberPicker
@@ -22,15 +22,15 @@
         android:layout_width="63dp"
         android:layout_height="124dp"
         android:theme="@style/AppTheme.NumberPicker"
-        app:layout_constraintStart_toStartOf="@id/btn_confirm"
         app:layout_constraintEnd_toEndOf="@id/btn_confirm"
+        app:layout_constraintStart_toStartOf="@id/btn_confirm"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_cancel"
         android:layout_width="70dp"
         android:layout_height="40dp"
-        android:text="취소"
+        android:text="@string/btn_cancel"
         app:layout_constraintEnd_toStartOf="@id/btn_confirm"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/yearpicker_datepicker" />
@@ -39,7 +39,7 @@
         android:id="@+id/btn_confirm"
         android:layout_width="70dp"
         android:layout_height="40dp"
-        android:text="확인"
+        android:text="@string/btn_confirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_cancel"
         app:layout_constraintTop_toBottomOf="@id/monthpicker_datepicker" />

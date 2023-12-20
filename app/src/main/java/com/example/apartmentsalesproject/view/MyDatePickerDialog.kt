@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment
 import com.example.apartmentsalesproject.R
 import java.util.Calendar
 
-class MyDatePickerDialog() : DialogFragment() {
+class MyDatePickerDialog : DialogFragment() {
     private var listener: DatePickerDialog.OnDateSetListener? = null
     private val MAX_YEAR = 2099
     private val MIN_YEAR = 1980

@@ -49,6 +49,7 @@ class MainViewModel : ViewModel() {
     fun getApartSales(codeId: String?, yearMonth: String?) {
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
             try {
+                Log.d(TAG, "getApartSales() codeId = $codeId, yearMonth = $yearMonth")
                 val response = retrofitInstance.getApartmentSales(
                     BuildConfig.api_key,
                     codeId.toString(),
@@ -70,6 +71,7 @@ class MainViewModel : ViewModel() {
     fun requestReverseGeocoding(coord: String) {
         job1 = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
             try {
+                Log.d(TAG, "requestReverseGeocoding()")
                 var query = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?\n" +
                         "request=coordsToaddr&coords=" + coord + "&sourcecrs=epsg:4326&output=json&orders=legalcode"
 
@@ -100,13 +102,11 @@ class MainViewModel : ViewModel() {
                 val jsonInfo = JSONObject(line)
                 val result = jsonInfo.getJSONArray("results").getJSONObject(0).getJSONObject("code")
                 val codeId = result.getString("id").substring(0 until 5)
-                Log.d(TAG, "확인 : $codeId")
+                Log.d(TAG, "법정동 코드 확인 : $codeId")
 //                withContext(Dispatchers.Main) {
 //                    _codeIdLiveData.value = codeId
 //                }
                 _codeIdLiveData.postValue(codeId)
-
-
             } catch (e: Exception) {
                 e.printStackTrace()
             }

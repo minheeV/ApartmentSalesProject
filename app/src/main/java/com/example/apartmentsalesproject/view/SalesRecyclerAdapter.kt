@@ -6,10 +6,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.apartmentsalesproject.databinding.ItemSalesBinding
 import com.example.apartmentsalesproject.model.data.SaleItem
 
-class SalesRecyclerAdapter(val items: List<SaleItem>) : RecyclerView.Adapter<SalesRecyclerAdapter.ViewHolder>() {
+class SalesRecyclerAdapter(val items: List<SaleItem>) :
+    RecyclerView.Adapter<SalesRecyclerAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: ItemSalesBinding) : RecyclerView.ViewHolder(binding.root) {
-
-
+        fun bind(item: SaleItem) {
+            binding.item = item
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,10 +24,6 @@ class SalesRecyclerAdapter(val items: List<SaleItem>) : RecyclerView.Adapter<Sal
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.apply {
-            name.text = items[position].apartmentName
-            dealAmount.text = items[position].dealAmount
-            dealDate.text = items[position].dealYear
-        }
+        holder.bind(items[position])
     }
 }

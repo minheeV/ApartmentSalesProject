@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.d(TAG, "지도 카메라 변경이 끝났을 때")
             val coord =
                 naverMap.cameraPosition.target.longitude.toString() + ", " + naverMap.cameraPosition.target.latitude
-            viewModel.requestReverseGeocoding(coord)
+            //viewModel.requestReverseGeocoding(coord)
         }
 
         //사용자의 위치가 변경될 때

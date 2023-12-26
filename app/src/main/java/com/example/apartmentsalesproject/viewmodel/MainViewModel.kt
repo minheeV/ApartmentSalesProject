@@ -38,13 +38,8 @@ class MainViewModel : ViewModel() {
         get() = _codeIdLiveData
 
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-        onError("Exception: ${throwable.localizedMessage}")
+        Log.e(TAG, "Exception: ${throwable.localizedMessage}")
     }
-
-    private fun onError(message: String) {
-        Log.d(TAG, message)
-    }
-
 
     fun getApartSales(codeId: String?, yearMonth: String?) {
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {

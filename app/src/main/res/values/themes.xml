@@ -14,5 +14,6 @@
         <item name="windowSplashScreenBackground">@color/theme_color</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/baseline_apartment_24</item>
         <item name="postSplashScreenTheme">@style/Theme.ApartmentSalesProject</item>
+        <!-- TODO splash icon 원형문제-->
     </style>
 </resources>

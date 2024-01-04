@@ -42,10 +42,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationSource: FusedLocationSource
 
     private var legalCode = 0 // 법정동코드
-    private var yearMonth = "202312" // 년월
+    var yearMonth = "202401" // 년월 TODO 현재 년, 월로 디폴트
+    var coord = ""
+
+    var recyclerViewState = "년/월을 선택해주세요."
 
     private var dateSetListener = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
         yearMonth = "$year" + getMonth(monthOfYear)
+        binding.dateText = yearMonth
+        viewModel.requestReverseGeocoding(coord)
         Log.d(TAG, "년월 = $yearMonth")
     }
 
@@ -53,11 +58,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.apply {
+            lifecycleOwner = this@MainActivity
+            btnDatePicker.setOnClickListener {
+                val pd = MyDatePickerDialog()
+                pd.setListener(dateSetListener)
+                pd.show(supportFragmentManager, "MyPicker")
+            }
 
-        binding.btnDatePicker.setOnClickListener {
-            val pd = MyDatePickerDialog()
-            pd.setListener(dateSetListener)
-            pd.show(supportFragmentManager, "MyPicker")
+            dataStateText = recyclerViewState
         }
 
         if (!hasPermission())
@@ -104,18 +113,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         viewModel.apartmentSalesData.observe(this) {
             Log.d(
                 TAG,
-                "size = ${it?.body?.items?.item?.size} and ====== ${it?.body?.items?.item.toString()}"
+                "apartmentSalesData observe size = ${it?.body?.items?.item?.size}, item ${it?.body?.items?.item.toString()}"
             )
             initSalesRecyclerView(it?.body?.items?.item!!)
+            recyclerViewState = "    년/월   |   거래금액(만원)   |   전용면적"
+            binding.dataStateText = recyclerViewState
         }
 
         //TODO 년월 바꿨을 때 법정동 같을 때 처리
         viewModel.codeIdLiveData.observe(this) {
-            Log.d(TAG, "ReverseGeocoding =  $it, legalCode = $legalCode")
-            if (legalCode != it?.toInt()) {
-                legalCode = it?.toInt()!!
-                viewModel.getApartSales(it, yearMonth)
-            }
+            Log.d(TAG, "codeIdLiveData observe =  $it, legalCode = $legalCode")
+            viewModel.getApartSales(it, yearMonth)
+//            if (legalCode != it?.toInt()) {
+//                legalCode = it?.toInt()!!
+//            }
         }
     }
 
@@ -125,28 +136,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             locationSource = fusedLocationSource
             uiSettings.isLocationButtonEnabled = true
             locationTrackingMode = LocationTrackingMode.Follow
-            val coord =
-                cameraPosition.target.longitude.toString() + ", " + cameraPosition.target.latitude
-            //TODO 현위치는 나중에 푸는걸로
-            //viewModel.requestReverseGeocoding(coord)
         }
 
         //지도 카메라가 변경 되고 있을 때
         naverMap.addOnCameraChangeListener { reason, animated ->
             Log.d(TAG, " 지도 카메라가 변경 되고 있을 때 카메라 변경 - reason: $reason, animated: $animated")
+            coord =
+                naverMap.cameraPosition.target.longitude.toString() + ", " + naverMap.cameraPosition.target.latitude
         }
 
         //지도 카메라 변경이 끝났을 때
         naverMap.addOnCameraIdleListener {
             Log.d(TAG, "지도 카메라 변경이 끝났을 때")
-            val coord =
+            coord =
                 naverMap.cameraPosition.target.longitude.toString() + ", " + naverMap.cameraPosition.target.latitude
-            //viewModel.requestReverseGeocoding(coord)
         }
 
         //사용자의 위치가 변경될 때
         naverMap.addOnLocationChangeListener {
             Log.d(TAG, "사용자의 위치가 변경될 때")
+            coord =
+                naverMap.cameraPosition.target.longitude.toString() + ", " + naverMap.cameraPosition.target.latitude
         }
     }
 
